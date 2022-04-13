@@ -69,7 +69,7 @@ public class GameProgress implements Serializable {
             String name;
             while ((entry = zin.getNextEntry()) != null) {
                 name = entry.getName();
-                FileOutputStream fout = new FileOutputStream(name);
+                FileOutputStream fout = new FileOutputStream(pathToUnZip + name);
                 for (int c = zin.read(); c != -1; c = zin.read()) {
                     fout.write(c);
                 }
@@ -80,5 +80,17 @@ public class GameProgress implements Serializable {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    static GameProgress openProgress(String pathToFile) {
+        GameProgress gameProgress = null;
+        try (FileInputStream fis = new FileInputStream(pathToFile);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            gameProgress = (GameProgress) ois.readObject();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.println(gameProgress);
+        return gameProgress;
     }
 }
