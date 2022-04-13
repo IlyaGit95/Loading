@@ -12,6 +12,7 @@ public class Main {
         String pathToFile2 = "D:\\Games\\savegames\\gameProgress2.dat";
         String pathToFile3 = "D:\\Games\\savegames\\gameProgress3.dat";
         String pathToZip = "D:\\Games\\savegames\\zipSave.zip";
+ //       String pathToUnZip = "D:\\Games\\savegames";
 
         List<String> pathToFileList = Arrays.asList(pathToFile1, pathToFile2, pathToFile3);
 
@@ -22,5 +23,7 @@ public class Main {
         GameProgress.zipFiles(pathToZip,pathToFileList);
 
         GameProgress.deleteNotZip(pathToFileList);
+
+       // GameProgress.openZip(pathToZip,pathToUnZip);
     }
 }

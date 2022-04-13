@@ -1,6 +1,7 @@
 import java.io.*;
 import java.util.List;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 public class GameProgress implements Serializable {
@@ -38,20 +39,20 @@ public class GameProgress implements Serializable {
     }
 
     static void zipFiles(String pathToFile, List<String> pathToFileList) {
-        try (ZipOutputStream zout = new ZipOutputStream(new
-                FileOutputStream(pathToFile))) {
-            for (String tmpZip : pathToFileList) {
-                try (FileInputStream fis = new FileInputStream(tmpZip)) {
-                    ZipEntry entry = new ZipEntry(pathToFile);
-                    zout.putNextEntry(entry);
-                    byte[] buffer = new byte[fis.available()];
-                    fis.read(buffer);
-                    zout.write(buffer);
-                    zout.closeEntry();
-                }
+        try (ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(pathToFile))) {
+            for (String pathToZip : pathToFileList) {
+                FileInputStream fis = new FileInputStream(pathToZip);
+                File file = new File(pathToZip);
+                ZipEntry entry = new ZipEntry(file.getName());
+                zout.putNextEntry(entry);
+                byte[] buffer = new byte[fis.available()];
+                fis.read(buffer);
+                zout.write(buffer);
+                zout.closeEntry();
+                fis.close();
             }
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -59,6 +60,25 @@ public class GameProgress implements Serializable {
         for (String notZip : pathToFileList) {
             File notZipFile = new File(notZip);
             notZipFile.delete();
+        }
+    }
+
+    static void openZip(String pathToZip, String pathToUnZip) {
+        try (ZipInputStream zin = new ZipInputStream(new FileInputStream(pathToZip))) {
+            ZipEntry entry;
+            String name;
+            while ((entry = zin.getNextEntry()) != null) {
+                name = entry.getName();
+                FileOutputStream fout = new FileOutputStream(name);
+                for (int c = zin.read(); c != -1; c = zin.read()) {
+                    fout.write(c);
+                }
+                fout.flush();
+                zin.closeEntry();
+                fout.close();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
